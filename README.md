@@ -1,36 +1,130 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌑 Blood Test Tracker Frontend
 
-## Getting Started
+Frontend application for uploading blood test reports, reviewing extracted biomarkers, tracking report history, and visualizing trends over time.
 
-First, run the development server:
+This app is built as a **dark, modern MVP** with a focus on UX clarity, product structure, and realistic health-data workflows.
 
-```bash
+---
+
+## ✨ Features
+
+### 🏠 Dashboard
+- Health summary landing page
+- Real report statistics
+- Dynamic health score trend chart
+- Recent reports from stored data
+- Latest insights derived from the newest report
+
+---
+
+### 📤 Upload Flow
+- Drag-and-drop upload area
+- Supports **PDF and CSV**
+- Selected file preview
+- Real backend extraction (CSV + PDF)
+- Review extracted biomarkers before saving
+- Add / remove biomarkers manually
+
+---
+
+### 🗂 Reports
+- View all uploaded reports
+- Open report details
+- Delete reports from list view
+- Tracked Trends block with dynamic biomarker selector
+
+---
+
+### 🧾 Report Details
+- View extracted biomarkers
+- Inline editing of biomarker values and units
+- Save changes directly to backend
+- Delete report from details page
+
+---
+
+### 📊 Trends
+- Dynamic biomarker selector (data-driven)
+- Real chart data from backend
+- Time-series visualization using stored reports
+
+---
+
+### ♻️ Demo Reset
+- Danger action in header
+- Clears all reports, biomarkers, and uploaded files
+
+---
+
+## 🏗 Tech Stack
+
+- Next.js (App Router)
+- TypeScript
+- Tailwind CSS
+- Recharts
+
+---
+
+## 📁 Project Structure
+
+src/
+  app/
+    page.tsx
+    upload/
+    reports/
+      page.tsx
+      [report]/
+  components/
+    dashboard/
+    reports/
+    report-details/
+    upload/
+  lib/
+    api.ts
+
+---
+
+## 🚀 Getting Started
+
+Install dependencies:
+
+npm install
+
+Run development server:
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Frontend runs on:
+http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🔌 Backend Dependency
 
-## Learn More
+This frontend expects the backend API to run on:
+http://localhost:4000
 
-To learn more about Next.js, take a look at the following resources:
+API client:
+src/lib/api.ts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🧠 Product Flow
 
-## Deploy on Vercel
+Upload file → Extract biomarkers → Review draft → Save report → View history → Track trends → Edit report
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## ⚠️ Limitations
+
+- No authentication
+- PDF parsing works only for text-based PDFs
+- No OCR for images
+- Rule-based extraction
+- Simplified insights logic
+
+---
+
+## 🎯 Summary
+
+This frontend delivers a realistic MVP with end-to-end data flow, editable extraction, dynamic trends, and clean UX.

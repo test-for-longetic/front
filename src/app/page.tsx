@@ -9,7 +9,7 @@ import { Report } from '../types/report'
 
 export default async function DashboardPage() {
   const reports: Report[] = await getReports();
-
+  
   return (
     <div className="space-y-6">
       <DashboardHeader />
