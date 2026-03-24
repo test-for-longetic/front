@@ -74,17 +74,27 @@ function FieldInput({
 
 export default function UploadPage() {
   const router = useRouter();
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [draftBiomarkers, setDraftBiomarkers] = useState<DraftBiomarker[] | null>(null);
+  const [draftBiomarkers, setDraftBiomarkers] = useState<
+    DraftBiomarker[] | null
+  >(null);
 
   const handleExtract = async () => {
+    if (!selectedFile) return;
     setDraftBiomarkers(initialDraft);
+  };
+
+  const handleCancel = () => {
+    setSelectedFile(null);
+    setDraftBiomarkers(null);
+    setIsSubmitting(false);
   };
 
   const handleDraftChange = (
     index: number,
     field: keyof DraftBiomarker,
-    value: string
+    value: string,
   ) => {
     setDraftBiomarkers((current) => {
       if (!current) return current;
@@ -99,22 +109,49 @@ export default function UploadPage() {
     });
   };
 
+  const handleAddBiomarker = () => {
+    setDraftBiomarkers((current) => [
+      ...(current ?? []),
+      {
+        name: "",
+        normalizedName: "",
+        value: "",
+        unit: "",
+        referenceMin: "",
+        referenceMax: "",
+        status: "normal",
+      },
+    ]);
+  };
+
+  const handleRemoveBiomarker = (index: number) => {
+    setDraftBiomarkers((current) => {
+      if (!current) return current;
+      return current.filter((_, i) => i !== index);
+    });
+  };
+
   const handleSaveReport = async () => {
-    if (!draftBiomarkers) return;
+    if (!draftBiomarkers || !selectedFile) return;
 
     try {
       setIsSubmitting(true);
 
       const createdReport = await createReport({
-        sourceFileName: "uploaded-report.pdf",
+        sourceFileName: selectedFile.name,
         reportDate: new Date().toISOString(),
         biomarkers: draftBiomarkers.map((item) => ({
           name: item.name,
-          normalizedName: item.normalizedName,
+          normalizedName:
+            item.normalizedName || item.name.toLowerCase().replace(/\s+/g, "_"),
           value: Number(item.value),
           unit: item.unit,
-          referenceMin: Number(item.referenceMin),
-          referenceMax: Number(item.referenceMax),
+          referenceMin: item.referenceMin
+            ? Number(item.referenceMin)
+            : undefined,
+          referenceMax: item.referenceMax
+            ? Number(item.referenceMax)
+            : undefined,
           status: item.status,
         })),
       });
@@ -133,25 +170,41 @@ export default function UploadPage() {
       <UploadHeader />
 
       <section className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
-        <UploadDropzone />
+        <UploadDropzone
+          selectedFileName={selectedFile?.name ?? null}
+          onFileSelect={setSelectedFile}
+        />
         <UploadSteps />
         <UploadActions
           onUpload={handleExtract}
+          onCancel={handleCancel}
           isSubmitting={isSubmitting}
+          isDisabled={!selectedFile}
           submitLabel="Extract Biomarkers"
         />
       </section>
 
       {draftBiomarkers ? (
         <section className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
-          <div className="mb-5">
-            <p className="text-sm text-zinc-400">Review Extracted Data</p>
-            <h2 className="mt-1 text-lg font-semibold text-white">
-              Check and adjust biomarkers before saving
-            </h2>
-            <p className="mt-2 text-sm text-zinc-500">
-              Review the extracted values below and edit anything that looks incorrect.
-            </p>
+          <div className="mb-5 flex items-end justify-between gap-4">
+            <div>
+              <p className="text-sm text-zinc-400">Review Extracted Data</p>
+              <h2 className="mt-1 text-lg font-semibold text-white">
+                Check and adjust biomarkers before saving
+              </h2>
+              <p className="mt-2 text-sm text-zinc-500">
+                Review the extracted values below and edit anything that looks
+                incorrect.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleAddBiomarker}
+              className="rounded-full border border-zinc-700 px-4 py-2 text-sm font-medium text-zinc-300 transition hover:border-zinc-600 hover:text-white"
+            >
+              Add Biomarker
+            </button>
           </div>
 
           <div className="space-y-4">
@@ -169,6 +222,14 @@ export default function UploadPage() {
                       Adjust extracted fields before saving this report
                     </p>
                   </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveBiomarker(index)}
+                    className="text-sm font-medium text-zinc-400 transition hover:text-white"
+                  >
+                    Remove
+                  </button>
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
