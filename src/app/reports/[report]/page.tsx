@@ -21,7 +21,7 @@ export default async function ReportDetailsPage({
       <ReportDetailsHeader report={report} />
       <ReportSummaryCards report={report} />
       <BiomarkersTable biomarkers={report.biomarkers} />
-      <ReportDetailsActions />
+      <ReportDetailsActions reportId={report.id}/>
     </div>
   );
 }

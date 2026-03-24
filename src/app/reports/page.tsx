@@ -8,7 +8,7 @@ export default async function ReportsPage() {
 
   return (
     <div className="space-y-6">
-      <ReportsHeader />s
+      <ReportsHeader />
       <TrackedTrends />
       <AllReports reports={reports} />
     </div>

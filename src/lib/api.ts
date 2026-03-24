@@ -89,3 +89,27 @@ export async function uploadFile(file: File) {
 
   return response.json();
 }
+
+export async function getBiomarkers() {
+  const response = await fetch(`${API_URL}/biomarkers`, {
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch biomarkers");
+  }
+
+  return response.json();
+}
+
+export async function deleteReport(id: string) {
+  const response = await fetch(`${API_URL}/reports/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete report");
+  }
+
+  return response.json();
+}

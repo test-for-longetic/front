@@ -18,7 +18,7 @@ export function ReportDetailsHeader({ report }: { report: Report }) {
         </p>
       </div>
 
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm text-zinc-400">
+      <div className="rounded-2xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm text-zinc-400 p-4">
         Source file:{" "}
         <span className="font-medium text-white">{report.sourceFileName}</span>
       </div>
