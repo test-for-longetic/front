@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { uploadFile } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { createReport } from "@/lib/api";
 import { UploadHeader } from "@/components/upload/UploadHeader";
@@ -80,9 +81,29 @@ export default function UploadPage() {
     DraftBiomarker[] | null
   >(null);
 
+
   const handleExtract = async () => {
     if (!selectedFile) return;
-    setDraftBiomarkers(initialDraft);
+
+    try {
+      setIsSubmitting(true);
+
+      const result = await uploadFile(selectedFile);
+
+      setDraftBiomarkers(
+        result.biomarkers.map((b: any) => ({
+          ...b,
+          value: String(b.value),
+          referenceMin: String(b.referenceMin),
+          referenceMax: String(b.referenceMax),
+        })),
+      );
+    } catch (e) {
+      console.error(e);
+      alert("Failed to extract biomarkers");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleCancel = () => {
