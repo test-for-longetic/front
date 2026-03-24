@@ -1,6 +1,6 @@
 import { CreateReportInput } from "@/types/сreateReportInput";
 
-const API_URL = "http://localhost:4000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 export async function getReports() {
   const response = await fetch(`${API_URL}/reports`, {
@@ -44,7 +44,7 @@ export async function createReport(input: CreateReportInput) {
 
 export async function updateBiomarker(
   id: string,
-  input: { value?: number; unit?: string }
+  input: { value?: number; unit?: string },
 ) {
   const response = await fetch(`${API_URL}/biomarkers/${id}`, {
     method: "PATCH",
@@ -62,10 +62,9 @@ export async function updateBiomarker(
 }
 
 export async function getTrends(biomarker: string) {
-  const response = await fetch(
-    `${API_URL}/trends?biomarker=${biomarker}`,
-    { cache: "no-store" }
-  );
+  const response = await fetch(`${API_URL}/trends?biomarker=${biomarker}`, {
+    cache: "no-store",
+  });
 
   if (!response.ok) {
     throw new Error("Failed to fetch trends");
