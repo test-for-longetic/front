@@ -45,13 +45,6 @@ export function ReportDetailsActions({ reportId }: ReportDetailsActionsProps) {
         >
           Delete Report
         </button>
-
-        <button
-          type="button"
-          className="rounded-full bg-zinc-100 px-5 py-2 text-sm font-medium text-zinc-950 transition hover:bg-white"
-        >
-          Save Changes
-        </button>
       </div>
     </section>
   );

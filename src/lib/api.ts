@@ -113,3 +113,15 @@ export async function deleteReport(id: string) {
 
   return response.json();
 }
+
+export async function resetAppData() {
+  const response = await fetch(`${API_URL}/reset`, {
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to reset app data");
+  }
+
+  return response.json();
+}

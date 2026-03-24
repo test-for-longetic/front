@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Report } from "@/types/report";
 import { ReportItem } from "./ReportItem";
+import { RedirectButton } from "@/ui/RedirectButton";
 
 export function AllReports({ reports }: { reports: Report[] }) {
   return (
@@ -13,12 +14,7 @@ export function AllReports({ reports }: { reports: Report[] }) {
           </h2>
         </div>
 
-        <Link
-          href="/upload"
-          className="rounded-full border border-zinc-700 bg-zinc-100 px-4 py-2 text-sm font-medium text-zinc-950 transition hover:bg-white"
-        >
-          Upload New
-        </Link>
+        <RedirectButton text='Upload New' url='upload' />
       </div>
 
       <div className="mt-5 space-y-3">
