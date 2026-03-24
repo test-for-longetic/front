@@ -1,3 +1,5 @@
+import { CreateReportInput } from "@/types/сreateReportInput";
+
 const API_URL = "http://localhost:4000";
 
 export async function getReports() {
@@ -19,6 +21,54 @@ export async function getReportById(id: string) {
 
   if (!response.ok) {
     throw new Error("Failed to fetch report");
+  }
+
+  return response.json();
+}
+
+export async function createReport(input: CreateReportInput) {
+  const response = await fetch(`${API_URL}/reports`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(input),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to create report");
+  }
+
+  return response.json();
+}
+
+export async function updateBiomarker(
+  id: string,
+  input: { value?: number; unit?: string }
+) {
+  const response = await fetch(`${API_URL}/biomarkers/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(input),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update biomarker");
+  }
+
+  return response.json();
+}
+
+export async function getTrends(biomarker: string) {
+  const response = await fetch(
+    `${API_URL}/trends?biomarker=${biomarker}`,
+    { cache: "no-store" }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch trends");
   }
 
   return response.json();
