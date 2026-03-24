@@ -1,7 +1,8 @@
 import Link from "next/link";
+import { Report } from "@/types/report";
 import { ReportItem } from "./ReportItem";
 
-export function AllReports() {
+export function AllReports({ reports }: { reports: Report[] }) {
   return (
     <section className="rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
       <div className="flex items-center justify-between">
@@ -21,27 +22,15 @@ export function AllReports() {
       </div>
 
       <div className="mt-5 space-y-3">
-        <ReportItem
-          date="March 12, 2026"
-          fileName="blood-test-march.pdf"
-          biomarkers="14 biomarkers"
-          score="78"
-          href="/reports/1"
-        />
-        <ReportItem
-          date="February 02, 2026"
-          fileName="checkup-february.pdf"
-          biomarkers="11 biomarkers"
-          score="72"
-          href="/reports/2"
-        />
-        <ReportItem
-          date="January 08, 2026"
-          fileName="annual-panel-january.pdf"
-          biomarkers="13 biomarkers"
-          score="75"
-          href="/reports/3"
-        />
+        {reports.length === 0 ? (
+          <div className="rounded-xl border border-dashed border-zinc-800 bg-zinc-950 p-8 text-center text-sm text-zinc-500">
+            No reports yet. Upload your first lab report to get started.
+          </div>
+        ) : (
+          reports.map((report) => (
+            <ReportItem key={report.id} report={report} />
+          ))
+        )}
       </div>
     </section>
   );
