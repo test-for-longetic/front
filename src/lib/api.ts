@@ -11,3 +11,15 @@ export async function getReports() {
 
   return response.json();
 }
+
+export async function getReportById(id: string) {
+  const response = await fetch(`${API_URL}/reports/${id}`, {
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch report");
+  }
+
+  return response.json();
+}

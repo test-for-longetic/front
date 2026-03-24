@@ -1,14 +1,26 @@
-import { BiomarkersTable } from "./(components)/BiomarkersTable";
-import { ReportDetailsHeader } from "./(components)/ReportDetailsHeader";
+import { getReportById } from "@/lib/api";
 import { ReportSummaryCards } from "./(components)/ReportSummaryCards";
 import { ReportDetailsActions } from "./(components)/ReportDetailsActions";
+import { ReportDetailsHeader } from "./(components)/ReportDetailsHeader";
+import { BiomarkersTable } from "./(components)/BiomarkersTable";
 
-export default function ReportDetailsPage() {
+type ReportDetailsPageProps = {
+  params: Promise<{
+    report: string;
+  }>;
+};
+
+export default async function ReportDetailsPage({
+  params,
+}: ReportDetailsPageProps) {
+  const { report: reportId } = await params;
+  const report = await getReportById(reportId);
+
   return (
     <div className="space-y-6">
-      <ReportDetailsHeader />
-      <ReportSummaryCards />
-      <BiomarkersTable />
+      <ReportDetailsHeader report={report} />
+      <ReportSummaryCards report={report} />
+      <BiomarkersTable biomarkers={report.biomarkers} />
       <ReportDetailsActions />
     </div>
   );
