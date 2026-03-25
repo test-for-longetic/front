@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Report } from "@/types/report";
 import { ReportItem } from "./ReportItem";
 import { RedirectButton } from "@/ui/RedirectButton";
