@@ -1,66 +1,77 @@
-# Blood Test API
+# Blood Test Tracker Frontend
 
-Backend service for uploading lab reports, extracting biomarkers, storing results, editing extracted values, deleting reports, resetting demo data, and providing trend analytics.
+Frontend application for uploading blood test reports, reviewing extracted biomarkers, tracking report history, and visualizing trends over time.
 
-This API is implemented as a lightweight MVP with a realistic file-processing flow and simple local persistence.
+This app is built as a dark, modern MVP with a focus on UX clarity, product structure, and realistic health-data workflows.
 
 ## Features
 
-### File upload and extraction
-- Upload CSV and PDF files
-- Store uploaded files locally in the `uploads/` directory
-- Parse CSV files directly
-- Extract text from text-based PDFs and map supported biomarkers
-- Return extracted biomarker drafts for frontend review before saving
-- Fallback extraction path for unsupported formats
+### Dashboard
+- Health summary landing page
+- Real report statistics
+- Dynamic health score trend chart
+- Recent reports from stored data
+- Latest insights derived from the newest report
+
+### Upload flow
+- Fixed header with responsive mobile drawer navigation
+- Drag-and-drop upload area
+- Supports PDF and CSV
+- Selected file preview
+- Extraction request sent to backend
+- Review extracted biomarkers before saving
+- Add and remove biomarkers manually before persistence
 
 ### Reports
-- Create reports with associated biomarkers
-- Retrieve all reports
-- Retrieve a single report with all biomarkers
-- Delete reports with cascade deletion of related biomarkers
+- View all uploaded reports
+- Open report details
+- Delete reports from list view
+- Tracked Trends block with dynamic biomarker selector
 
-### Biomarkers
-- Edit biomarker values and units after extraction
-- Support inline editing from the frontend
+### Report details
+- View extracted biomarkers
+- Inline editing of biomarker values and units
+- Save row changes directly to backend
+- Delete report from details page
 
 ### Trends
-- Aggregate biomarker values over time
-- Query trends by normalized biomarker name
-- Return unique biomarker options for dynamic selectors
+- Dynamic biomarker selector based on stored data
+- Real chart data from backend
+- Time-series visualization using stored reports
 
 ### Demo reset
-- Clear all reports
-- Clear all biomarkers
-- Remove uploaded files from disk
+- Danger action in header
+- Clears reports, biomarkers, and uploaded files through backend API
 
 ## Tech stack
 
-- Node.js
-- Express
+- Next.js (App Router)
 - TypeScript
-- Prisma ORM
-- SQLite
-- Multer
-- csv-parse
-- pdf-parse
+- Tailwind CSS
+- Recharts
 
 ## Project structure
 
 ```txt
 src/
+  app/
+    page.tsx
+    upload/
+    reports/
+      page.tsx
+      [report]/
+  components/
+    dashboard/
+    reports/
+    report-details/
+    upload/
   lib/
-    prisma.ts
-  utils/
-    parseCsv.ts
-    parsePdfText.ts
-  server.ts
-
-prisma/
-  schema.prisma
-  migrations/
-
-uploads/
+    api.ts
+  ui/
+    Header.tsx
+    Logo.tsx
+    RedirectButton.tsx
+    ResetAppButton.tsx
 ```
 
 ## Getting started
@@ -71,129 +82,125 @@ Install dependencies:
 npm install
 ```
 
-Run Prisma migrations:
-
-```bash
-npx prisma migrate dev
-```
-
 Run the development server:
 
 ```bash
 npm run dev
 ```
 
-The API runs on:
+Frontend runs on:
+
+```txt
+http://localhost:3000
+```
+
+## Backend dependency
+
+This frontend expects the backend API to run on:
 
 ```txt
 http://localhost:4000
 ```
 
-## Build and start
-
-```bash
-npm run build
-npm run start
-```
-
-## API endpoints
-
-### Health
-```http
-GET /health
-```
-
-### Reports
-```http
-GET /reports
-GET /reports/:id
-POST /reports
-DELETE /reports/:id
-```
-
-### Biomarkers
-```http
-PATCH /biomarkers/:id
-```
-
-### Trends
-```http
-GET /trends?biomarker=glucose
-GET /biomarkers
-```
-
-### Upload
-```http
-POST /upload
-```
-
-Accepts a multipart file upload and returns extracted biomarker draft data.
-
-Behavior:
-- CSV -> parsed directly
-- PDF -> text extraction plus rule-based parsing
-- unsupported files -> fallback extraction
-
-### Reset demo data
-```http
-POST /reset
-```
-
-Deletes all reports, biomarkers, and uploaded files.
-
-## Extraction pipeline
+All API calls are handled in:
 
 ```txt
-Upload -> Detect file type -> Parse -> Normalize -> Return draft -> Review -> Save
+src/lib/api.ts
 ```
 
-### CSV
-CSV parsing supports expected columns such as:
-- `name`
-- `value`
-- `unit`
-- `referenceMin`
-- `referenceMax`
-- `status`
+For deployment, set:
 
-### PDF
-Text-based PDFs are parsed by:
-1. extracting text from the file
-2. scanning for supported biomarkers
-3. mapping numeric values and simple reference ranges
+```env
+NEXT_PUBLIC_API_URL=<your-backend-url>
+```
 
-### Images / OCR
-Not implemented in this MVP.
+## Product flow
 
-## Notes
+```txt
+Upload file -> Extract biomarkers -> Review draft -> Save report -> View history -> Track trends -> Edit report
+```
 
-- The app is intentionally modeled as a single-user demo flow
-- Extraction is best-effort and designed to be reviewed in the frontend before persistence
-- SQLite is used for simplicity and local setup speed
+The review step is intentionally central to the UX:
+- extraction may be imperfect
+- users can validate and correct extracted values before saving
+
+## Main screens
+
+### Dashboard (`/`)
+Shows:
+- summary cards
+- score trend
+- latest insights
+- recent reports
+
+### Upload (`/upload`)
+Lets the user:
+- choose or drag a file
+- extract biomarker draft
+- review and edit extracted data
+- save final report
+
+### Reports (`/reports`)
+Shows:
+- tracked trends
+- all uploaded reports
+- delete actions
+
+### Report details (`/reports/[report]`)
+Shows:
+- report summary cards
+- editable biomarker table
+- delete action
+- row-level inline save
+
+## API integration
+
+The frontend integrates with:
+- `GET /reports`
+- `GET /reports/:id`
+- `POST /reports`
+- `PATCH /biomarkers/:id`
+- `DELETE /reports/:id`
+- `GET /trends`
+- `GET /biomarkers`
+- `POST /upload`
+- `POST /reset`
+
+## Design approach
+
+The UI uses:
+- dark theme by default
+- fixed header
+- responsive desktop/mobile navigation
+- spacious cards and soft borders
+- dashboard-style layout
+- minimal but product-focused interactions
+
+The goal is to feel like a modern health analytics product rather than a plain CRUD interface.
 
 ## Limitations
 
 - No authentication
-- No OCR for image uploads
-- PDF extraction works only for text-based PDFs
-- Biomarker parsing is rule-based
+- File extraction quality depends on the backend parser
+- No OCR for image files in the current MVP
+- Some dashboard insights use simplified logic
 - Validation is intentionally lightweight
 
 ## Future improvements
 
-- OCR support for images and scanned PDFs
-- LLM-assisted extraction
-- Per-user ownership and authentication
-- Stronger biomarker normalization and validation
-- Background processing for heavy uploads
-- Automated tests for parsing and endpoints
+- Toast notifications
+- Better loading and error states
+- OCR / image support
+- LLM-assisted summaries
+- Stronger validation
+- Tests for key flows
+- More responsive refinements for smaller screens
 
 ## Summary
 
-This backend provides a practical MVP pipeline for:
-- uploading lab data
-- extracting biomarkers
-- reviewing and editing values
-- storing reports
-- analyzing trends
-- resetting demo state quickly
+This frontend delivers a realistic MVP with:
+- end-to-end data flow
+- editable extraction review
+- dynamic trends visualization
+- responsive navigation
+- clean, maintainable UI structure
