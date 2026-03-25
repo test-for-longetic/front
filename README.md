@@ -1,130 +1,199 @@
-# 🌑 Blood Test Tracker Frontend
+# Blood Test API
 
-Frontend application for uploading blood test reports, reviewing extracted biomarkers, tracking report history, and visualizing trends over time.
+Backend service for uploading lab reports, extracting biomarkers, storing results, editing extracted values, deleting reports, resetting demo data, and providing trend analytics.
 
-This app is built as a **dark, modern MVP** with a focus on UX clarity, product structure, and realistic health-data workflows.
+This API is implemented as a lightweight MVP with a realistic file-processing flow and simple local persistence.
 
----
+## Features
 
-## ✨ Features
+### File upload and extraction
+- Upload CSV and PDF files
+- Store uploaded files locally in the `uploads/` directory
+- Parse CSV files directly
+- Extract text from text-based PDFs and map supported biomarkers
+- Return extracted biomarker drafts for frontend review before saving
+- Fallback extraction path for unsupported formats
 
-### 🏠 Dashboard
-- Health summary landing page
-- Real report statistics
-- Dynamic health score trend chart
-- Recent reports from stored data
-- Latest insights derived from the newest report
+### Reports
+- Create reports with associated biomarkers
+- Retrieve all reports
+- Retrieve a single report with all biomarkers
+- Delete reports with cascade deletion of related biomarkers
 
----
+### Biomarkers
+- Edit biomarker values and units after extraction
+- Support inline editing from the frontend
 
-### 📤 Upload Flow
-- Drag-and-drop upload area
-- Supports **PDF and CSV**
-- Selected file preview
-- Real backend extraction (CSV + PDF)
-- Review extracted biomarkers before saving
-- Add / remove biomarkers manually
+### Trends
+- Aggregate biomarker values over time
+- Query trends by normalized biomarker name
+- Return unique biomarker options for dynamic selectors
 
----
+### Demo reset
+- Clear all reports
+- Clear all biomarkers
+- Remove uploaded files from disk
 
-### 🗂 Reports
-- View all uploaded reports
-- Open report details
-- Delete reports from list view
-- Tracked Trends block with dynamic biomarker selector
+## Tech stack
 
----
-
-### 🧾 Report Details
-- View extracted biomarkers
-- Inline editing of biomarker values and units
-- Save changes directly to backend
-- Delete report from details page
-
----
-
-### 📊 Trends
-- Dynamic biomarker selector (data-driven)
-- Real chart data from backend
-- Time-series visualization using stored reports
-
----
-
-### ♻️ Demo Reset
-- Danger action in header
-- Clears all reports, biomarkers, and uploaded files
-
----
-
-## 🏗 Tech Stack
-
-- Next.js (App Router)
+- Node.js
+- Express
 - TypeScript
-- Tailwind CSS
-- Recharts
+- Prisma ORM
+- SQLite
+- Multer
+- csv-parse
+- pdf-parse
 
----
+## Project structure
 
-## 📁 Project Structure
-
+```txt
 src/
-  app/
-    page.tsx
-    upload/
-    reports/
-      page.tsx
-      [report]/
-  components/
-    dashboard/
-    reports/
-    report-details/
-    upload/
   lib/
-    api.ts
+    prisma.ts
+  utils/
+    parseCsv.ts
+    parsePdfText.ts
+  server.ts
 
----
+prisma/
+  schema.prisma
+  migrations/
 
-## 🚀 Getting Started
+uploads/
+```
+
+## Getting started
 
 Install dependencies:
 
+```bash
 npm install
+```
 
-Run development server:
+Run Prisma migrations:
 
+```bash
+npx prisma migrate dev
+```
+
+Run the development server:
+
+```bash
 npm run dev
+```
 
-Frontend runs on:
-http://localhost:3000
+The API runs on:
 
----
-
-## 🔌 Backend Dependency
-
-This frontend expects the backend API to run on:
+```txt
 http://localhost:4000
+```
 
-API client:
-src/lib/api.ts
+## Build and start
 
----
+```bash
+npm run build
+npm run start
+```
 
-## 🧠 Product Flow
+## API endpoints
 
-Upload file → Extract biomarkers → Review draft → Save report → View history → Track trends → Edit report
+### Health
+```http
+GET /health
+```
 
----
+### Reports
+```http
+GET /reports
+GET /reports/:id
+POST /reports
+DELETE /reports/:id
+```
 
-## ⚠️ Limitations
+### Biomarkers
+```http
+PATCH /biomarkers/:id
+```
+
+### Trends
+```http
+GET /trends?biomarker=glucose
+GET /biomarkers
+```
+
+### Upload
+```http
+POST /upload
+```
+
+Accepts a multipart file upload and returns extracted biomarker draft data.
+
+Behavior:
+- CSV -> parsed directly
+- PDF -> text extraction plus rule-based parsing
+- unsupported files -> fallback extraction
+
+### Reset demo data
+```http
+POST /reset
+```
+
+Deletes all reports, biomarkers, and uploaded files.
+
+## Extraction pipeline
+
+```txt
+Upload -> Detect file type -> Parse -> Normalize -> Return draft -> Review -> Save
+```
+
+### CSV
+CSV parsing supports expected columns such as:
+- `name`
+- `value`
+- `unit`
+- `referenceMin`
+- `referenceMax`
+- `status`
+
+### PDF
+Text-based PDFs are parsed by:
+1. extracting text from the file
+2. scanning for supported biomarkers
+3. mapping numeric values and simple reference ranges
+
+### Images / OCR
+Not implemented in this MVP.
+
+## Notes
+
+- The app is intentionally modeled as a single-user demo flow
+- Extraction is best-effort and designed to be reviewed in the frontend before persistence
+- SQLite is used for simplicity and local setup speed
+
+## Limitations
 
 - No authentication
-- PDF parsing works only for text-based PDFs
-- No OCR for images
-- Rule-based extraction
-- Simplified insights logic
+- No OCR for image uploads
+- PDF extraction works only for text-based PDFs
+- Biomarker parsing is rule-based
+- Validation is intentionally lightweight
 
----
+## Future improvements
 
-## 🎯 Summary
+- OCR support for images and scanned PDFs
+- LLM-assisted extraction
+- Per-user ownership and authentication
+- Stronger biomarker normalization and validation
+- Background processing for heavy uploads
+- Automated tests for parsing and endpoints
 
-This frontend delivers a realistic MVP with end-to-end data flow, editable extraction, dynamic trends, and clean UX.
+## Summary
+
+This backend provides a practical MVP pipeline for:
+- uploading lab data
+- extracting biomarkers
+- reviewing and editing values
+- storing reports
+- analyzing trends
+- resetting demo state quickly
